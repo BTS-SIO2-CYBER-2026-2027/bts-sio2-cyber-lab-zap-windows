@@ -22,6 +22,11 @@
       "label": "ZAP graphique - BTS SIO",
       "onAutoForward": "notify",
       "visibility": "private"
+    },
+    "8093": {
+      "label": "Interne ZAP - ne pas ouvrir",
+      "onAutoForward": "ignore",
+      "visibility": "private"
     }
   },
   "customizations": {

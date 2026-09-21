@@ -108,33 +108,63 @@ Une alerte ZAP n'est pas une preuve suffisante à elle seule : il peut exister d
 
 ## Explorer ZAP avec son interface graphique
 
-Après avoir consulté les rapports, ouvrez un terminal dans votre Codespace et lancez :
+Tout se fait dans le navigateur du Codespace : aucun logiciel à installer sur votre PC. Après avoir consulté les rapports, ouvrez le terminal du Codespace et lancez :
 
 ```bash
 bash scripts/zap-gui.sh start
 ```
 
-Dans l'onglet **Ports**, ouvrez l'adresse du **port 8091** et ajoutez `/zap/` à la fin de l'adresse si nécessaire. Patientez pendant le premier chargement. Le conteneur exécute ZAP sous Linux ; l'interface et les fonctions d'analyse sont celles de ZAP Desktop. Le script publie Webswing sur le port local 8093 et lance un relais local sur 8091 : Codespaces conserve son URL privée, tandis que Webswing reçoit l'origine locale qu'il exige pour sa connexion WebSocket.
+Attendez que le terminal affiche **« ZAP graphique est prêt »**. Dans l'onglet **Ports**, repérez le **port 8091**, vérifiez que sa visibilité est **Privée**, puis cliquez sur **Ouvrir dans le navigateur**. Si nécessaire, ajoutez `/zap/` à la fin de l'adresse transférée. **N'ouvrez jamais le port 8093** : il s'agit du port technique interne. La configuration demande à Codespaces de l'ignorer ; s'il ouvre malgré tout un onglet 8093, fermez cet onglet et revenez au port 8091.
 
-Si vous utilisiez une version antérieure du template, la première commande `start` recrée uniquement le conteneur graphique pour déplacer son port interne vers 8093. Le volume Docker `bts-sio-zap-gui-data` reste en place. Les rapports automatiques ne sont pas modifiés. Vérifiez `bash scripts/zap-gui.sh status` : ZAP et le relais doivent fonctionner. Le test final est l'ouverture effective de la fenêtre ZAP dans le navigateur Codespaces ; un simple code HTTP 101 ne suffit pas à valider l'interface.
+N'ouvrez qu'**un seul onglet ZAP** à la fois. Plusieurs onglets peuvent consommer toutes les connexions graphiques autorisées par Webswing.
 
-Dans le champ « URL à attaquer » de l'onglet « Démarrage rapide », utilisez **uniquement** :
+À la première ouverture, ZAP peut afficher **« Do you want to persist the ZAP Session? »** : sélectionnez **« No, I do not want to persist this session at this moment in time »**, puis cliquez sur **Start**. Cette réponse concerne l'enregistrement de la session graphique, pas les rapports automatiques enregistrés dans `reports/`. Si la fenêtre **Manage Add-ons** s'ouvre, fermez-la avec le **X** en haut à droite de cette fenêtre pour revenir à la fenêtre principale de ZAP. Ne fermez pas tout l'onglet du navigateur à cette étape.
+
+### Explorer uniquement votre application
+
+Dans ZAP, ouvrez **Quick Start / Démarrage rapide**, puis **Automated Scan / Scan automatisé**. Dans le champ **URL to attack / URL à attaquer**, saisissez **exactement** :
 
 ```text
 http://host.docker.internal:3000
 ```
 
-Cette adresse permet au conteneur ZAP de joindre votre application du laboratoire. **Ne saisissez pas** l'adresse de github.dev, de Codespaces, ni un site extérieur. Commencez par explorer manuellement l'arborescence, les requêtes et les alertes ; un scan actif modifie le comportement de l'application et doit rester limité à votre laboratoire.
+Cette adresse permet au conteneur ZAP de joindre **votre application de laboratoire sur le port 3000**. Dans les options du scan, cochez **Use traditional spider**. Si le message **« The options chosen mean that you need to select the traditional spider »** apparaît, cliquez sur **OK**, cochez **Use traditional spider**, puis relancez **Attack / Attaquer**. Vérifiez l'adresse avant de cliquer sur **Attack** : ce bouton lance l'exploration et des tests actifs, qui peuvent modifier les données de l'application. Utilisez-le uniquement pour cette application et dans le cadre de l'exercice autorisé par votre enseignant. Consultez ensuite les panneaux **Sites**, **History / Historique** et **Alerts / Alertes** pour examiner les requêtes et les résultats. La fenêtre **Manage Add-ons** peut rester fermée pendant l'exercice.
+
+**Périmètre autorisé :** n'entrez aucune URL `github.dev` ou `app.github.dev`, aucune adresse d'un autre Codespace, aucun site public et aucune application d'un tiers. Si votre application renvoie vers un autre site, ne suivez pas ce lien avec ZAP et ne lancez aucun scan sur ce site. L'interface graphique de ZAP accepte techniquement d'autres adresses : **c'est à vous de respecter la cible autorisée**. En cas de doute sur une adresse ou une action, arrêtez-vous et demandez à l'enseignant avant de lancer le scan. Le respect de ce périmètre et de l'autorisation est indispensable ; la seule utilisation de ZAP ne garantit pas à elle seule la conformité légale. Voir l'[article 323-1 du Code pénal](https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047052655).
 
 Le ZAP graphique est une instance différente de celles lancées pour les rapports automatisés : les anciens scans ne figurent pas dans son historique. Explorez la cible dans l'interface pour générer votre propre historique ; comparez ensuite ses alertes aux rapports du dossier `reports/`. La session du ZAP graphique est conservée dans un volume Docker propre au Codespace.
 
-Pour arrêter l'interface et libérer des ressources :
+### Fermer ZAP après l'exercice
+
+Pour masquer simplement la fenêtre, fermez **l'onglet ZAP du navigateur** ; l'instance continue alors de tourner dans le Codespace. Pour **arrêter réellement ZAP et libérer des ressources**, revenez au terminal du Codespace et lancez :
 
 ```bash
 bash scripts/zap-gui.sh stop
 ```
 
-Réexécutez `start` pour la rouvrir. Gardez la visibilité du port **8091 privée** dans Codespaces et ne partagez pas son URL : l'interface permet de piloter ZAP. [Documentation ZAP Webswing](https://www.zaproxy.org/docs/docker/webswing/).
+Vous pouvez ensuite fermer l'onglet ZAP. Pour le rouvrir plus tard, relancez `bash scripts/zap-gui.sh start`, puis rouvrez le port 8091. Gardez ce port **privé** et ne partagez pas son URL : elle donne accès à l'interface de ZAP. Le conteneur exécute la version Linux de ZAP Desktop, affichée dans votre navigateur. [Documentation ZAP Webswing](https://www.zaproxy.org/docs/docker/webswing/).
+
+### Si la connexion à ZAP est perdue
+
+Si la page affiche **« Your connection to the server is lost »**, cliquez d'abord sur **Reconnect** et attendez quelques instants. Si ZAP s'affiche de nouveau, reprenez votre travail. Évitez **Sign out**, qui ferme votre session dans cette interface.
+
+Si **Reconnect** ne suffit pas, revenez à l'onglet de l'éditeur Codespaces et vérifiez l'état de ZAP dans son terminal :
+
+```bash
+bash scripts/zap-gui.sh status
+```
+
+Si ZAP ou le relais du port 8091 est arrêté, relancez-les avec `bash scripts/zap-gui.sh start`. Le script recrée automatiquement un conteneur ZAP arrêté afin d'éviter l'erreur **« Xvfb failed to start »**, tout en conservant le volume de données.
+
+Si la page affiche **« There are too many active connections »**, fermez tous les onglets ZAP/Webswing, gardez seulement l'éditeur Codespaces, puis lancez :
+
+```bash
+bash scripts/zap-gui.sh restart
+```
+
+Attendez le message **« ZAP graphique est prêt »**, puis ouvrez une seule fois le **port privé 8091**, avec `/zap/` à la fin. N'utilisez jamais 8093. La commande `restart` recrée uniquement le conteneur graphique et conserve son volume de données.
+
+Après un redémarrage du Codespace, repartez de l'éditeur et relancez `bash scripts/zap-gui.sh start` : une ancienne adresse transférée peut ne plus fonctionner.
 
 ## Stacks détectées automatiquement
 

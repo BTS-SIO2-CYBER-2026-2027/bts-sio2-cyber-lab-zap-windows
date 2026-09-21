@@ -40,7 +40,7 @@ Les rapports apparaissent automatiquement dans `reports/` :
 
 Vous devez ensuite relier les alertes pertinentes au code qui les provoque et expliquer les corrections nécessaires.
 
-Pour manipuler l'interface graphique de ZAP, lancez `bash scripts/zap-gui.sh start`, ouvrez le port privé **8091** dans l'onglet **Ports** (chemin `/zap`) et analysez uniquement `http://host.docker.internal:3000`. Cette nouvelle session n'affiche pas les anciens scans automatisés. Arrêtez-la ensuite avec `bash scripts/zap-gui.sh stop`.
+Pour manipuler l'interface graphique de ZAP, lancez `bash scripts/zap-gui.sh start`, attendez le message **« ZAP graphique est prêt »**, puis ouvrez une seule fois le port privé **8091** dans l'onglet **Ports** (chemin `/zap/`). **N'ouvrez jamais le port technique 8093.** Analysez uniquement `http://host.docker.internal:3000`. Dans **Quick Start > Automated Scan**, cochez **Use traditional spider** avant de cliquer sur **Attack** ; si ZAP affiche un avertissement demandant cette option, cliquez sur **OK**, cochez-la et relancez **Attack**. Cette nouvelle session n'affiche pas les anciens scans automatisés. Arrêtez-la ensuite avec `bash scripts/zap-gui.sh stop`. En cas de connexions trop nombreuses, fermez tous les onglets ZAP, lancez `bash scripts/zap-gui.sh restart`, puis rouvrez uniquement 8091. La procédure détaillée figure dans le `README.md`.
 
 ## 5 — Corriger
 
