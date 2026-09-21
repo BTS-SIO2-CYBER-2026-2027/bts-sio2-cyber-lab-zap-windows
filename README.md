@@ -114,7 +114,9 @@ Après avoir consulté les rapports, ouvrez un terminal dans votre Codespace et 
 bash scripts/zap-gui.sh start
 ```
 
-Dans l'onglet **Ports**, ouvrez l'adresse du **port 8091** et ajoutez `/zap` à la fin de l'adresse si nécessaire. Patientez pendant le premier chargement. Vous voyez alors l'interface de bureau de ZAP directement dans votre navigateur, sans installation Windows. Le conteneur exécute ZAP sous Linux ; l'interface et les fonctions d'analyse sont celles de ZAP Desktop.
+Dans l'onglet **Ports**, ouvrez l'adresse du **port 8091** et ajoutez `/zap/` à la fin de l'adresse si nécessaire. Patientez pendant le premier chargement. Le conteneur exécute ZAP sous Linux ; l'interface et les fonctions d'analyse sont celles de ZAP Desktop. Le script publie Webswing sur le port local 8093 et lance un relais local sur 8091 : Codespaces conserve son URL privée, tandis que Webswing reçoit l'origine locale qu'il exige pour sa connexion WebSocket.
+
+Si vous utilisiez une version antérieure du template, la première commande `start` recrée uniquement le conteneur graphique pour déplacer son port interne vers 8093. Le volume Docker `bts-sio-zap-gui-data` reste en place. Les rapports automatiques ne sont pas modifiés. Vérifiez `bash scripts/zap-gui.sh status` : ZAP et le relais doivent fonctionner. Le test final est l'ouverture effective de la fenêtre ZAP dans le navigateur Codespaces ; un simple code HTTP 101 ne suffit pas à valider l'interface.
 
 Dans le champ « URL à attaquer » de l'onglet « Démarrage rapide », utilisez **uniquement** :
 
