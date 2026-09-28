@@ -259,3 +259,13 @@ curl -i http://127.0.0.1:3000/
 ```
 
 Il ne doit pas tuer le processus existant ni démarrer une seconde instance.
+
+### Si l'interface graphique ZAP affiche « connexion perdue »
+
+Le port public à ouvrir est **8091** avec `/zap/`. Le port **8093** est uniquement technique et ne doit pas être ouvert dans le navigateur. Le script attend désormais que Webswing soit réellement prêt avant de publier le relais 8091. Si un ancien onglet affiche encore « ZAP indisponible », fermez-le puis rouvrez le port 8091. Pour réinitialiser proprement la session :
+
+```bash
+bash scripts/zap-gui.sh restart
+```
+
+Attendez le message **« ZAP graphique est prêt »** avant d'ouvrir l'interface.

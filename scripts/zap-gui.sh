@@ -72,8 +72,11 @@ case "$ACTION" in
     elif ! docker container inspect "$NAME" >/dev/null 2>&1; then
       create_container
     fi
-    start_proxy
+    # Ne publie le port 8091 qu'après disponibilité réelle de Webswing.
+    # Sinon Codespaces peut ouvrir 8091 pendant le démarrage et afficher
+    # durablement une page « ZAP indisponible ».
     wait_for_zap
+    start_proxy
     echo "ZAP graphique est prêt. Ouvrez uniquement l'adresse privée du port 8091, puis /zap/."
     echo "Ignorez le port technique 8093 s'il apparaît dans Codespaces."
     echo "Dans ZAP, ciblez uniquement l'application du laboratoire : http://host.docker.internal:$APP_PORT"
@@ -83,8 +86,11 @@ case "$ACTION" in
     check_docker
     echo "Réinitialisation de la connexion graphique ZAP..."
     recreate_container
-    start_proxy
+    # Ne publie le port 8091 qu'après disponibilité réelle de Webswing.
+    # Sinon Codespaces peut ouvrir 8091 pendant le démarrage et afficher
+    # durablement une page « ZAP indisponible ».
     wait_for_zap
+    start_proxy
     echo "ZAP graphique est prêt. Fermez les anciens onglets et ouvrez uniquement le port privé 8091, puis /zap/."
     ;;
   stop)
